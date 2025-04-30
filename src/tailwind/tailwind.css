@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@media (max-width: 1285px) {
+    .statistics-section {
+        position: relative;
+        bottom: -60px;
+    }
+}
+
+.nav-link {
+    @apply transition-all duration-300 ease-in-out;
+}
+
+.active {
+    @apply font-bold text-[22px] rounded-lg bg-[#3773C9] text-white px-[30px] py-[10px] transition-all duration-300 ease-in-out;
+}
+/* Active state for mobile navigation */
+.mobile-nav-link.active-mob-nav {
+    color: #3773C9;
+    /* Set the color to #3773C9 */
+    font-weight: bold;
+    /* Make the font bold */
+}
+        .accordion-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+    
+        .accordion-open .accordion-content {
+            max-height: 500px;
+            /* Adjust as needed */
+            opacity: 1;
+        }
+    
+        .accordion-open .icon-open {
+            display: block;
+        }
+    
+        .accordion-open .icon-close {
+            display: none;
+        }
+    
+        .active-tab {
+            background-color: #3773c9;
+            color: white;
+            border-color: #3b82f6;
+            transition: all 0.3s ease-in-out;
+        }
+
+  /* Remove default Swiper button styles */
+  .swiper-button-prev::after,
+  .swiper-button-next::after {
+      content: "";
+      display: none;
+  }
+
+  .swiper-button-next {
+      left: 145px !important;
+      background-color: #ebf1fa !important;
+  }
+
+  .swiper-button-prev {
+      right: 145px !important;
+  }
+
+  .mySwiper {
+      height: 600px;
+  }
+
+  /* Custom styling for the navigation buttons */
+  .custom-swiper-button {
+      display: flex;
+      width: 32px;
+      height: 32px;
+      padding: 0px 6px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      border-radius: 12.5px;
+      background: #EBF1FA;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out;
+      position: absolute;
+      top: 530px !important;
+  }
+
+  .custom-swiper-button:hover {
+      background: #c0c4c8;
+  }
+
+  .swiper-button-next.swiper-button-disabled,
+  .swiper-button-prev.swiper-button-disabled {
+      background: #D9DCDF !important;
+      cursor: not-allowed !important;
+  }
+/* 
+  #wpadminbar {
+      display: none !important;
+  } */
+
+
+  /* Tailwind-compatible global styles */
+  .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+
+  .hide-scrollbar {
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+  }
