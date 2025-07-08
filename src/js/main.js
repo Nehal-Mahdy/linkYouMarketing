@@ -1,9 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-  AOS.init();
-});
-
-// console.log("AOS initialized");
-
 // main menu / mobile menu
 const menuButton = document.getElementById('menu-button');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -35,14 +29,30 @@ document.addEventListener('DOMContentLoaded', function () {
   const navbar = document.querySelector('nav');
   const navbarHeight = navbar ? navbar.offsetHeight + 20 : 100; // Extra padding
 
+  const serviceLinks =document.querySelectorAll('.service-link');
   // Function to remove 'active' from all links (both mobile and desktop)
   function removeActiveClasses() {
     navLinks.forEach((link) => link.classList.remove('active'));
     mobileNavLinks.forEach((link) => link.classList.remove('active-mob-nav'));
   }
  function isHomePage() {
-    return window.location.pathname === '/moahal/wordpress/' || window.location.pathname === '/index.php'; 
+    return window.location.pathname === '/linkYouMarketing/wordpress/' || window.location.pathname === '/index.php'; 
   }
+
+  // smooth scrolling on click for service links
+  serviceLinks.forEach((link) => {
+    
+    link.addEventListener('click', function (e) {
+      console.log("Service link clicked"); // Debugging line
+      
+      const targetId = this.getAttribute('href').substring(1);
+      if (!isHomePage()) {
+        window.location.href = '/linkYouMarketing/wordpress/' + '#' + targetId;
+        return;
+      }
+     
+    });
+  });
 
   // Smooth scrolling on click for desktop navigation
   navLinks.forEach((link) => {
@@ -56,7 +66,7 @@ if (isHomePage() && this.getAttribute('href').includes('#')) {
       const targetId = this.getAttribute('href').substring(1);
       const targetSection = document.getElementById(targetId);
       if (!isHomePage() && this.getAttribute('href').includes('#')) {
-    window.location.href = '/moahal/wordpress/' + '#' + targetId;
+    window.location.href = '/linkYouMarketing/wordpress/' + '#' + targetId;
       return;
   }
       
@@ -83,7 +93,7 @@ if (isHomePage() && this.getAttribute('href').includes('#')) {
             const targetId = this.getAttribute('href').substring(1);
       const targetSection = document.getElementById(targetId);
   if (!isHomePage() && this.getAttribute('href').includes('#')) {
-    window.location.href = '/moahal/wordpress/' + '#' + targetId;
+    window.location.href = '/linkYouMarketing/wordpress/' + '#' + targetId;
       return;
   }
       if (targetSection) {
@@ -107,7 +117,7 @@ if (isHomePage() && this.getAttribute('href').includes('#')) {
       const targetId = this.getAttribute('href').substring(1);
       const targetSection = document.getElementById(targetId);
   if (!isHomePage() && this.getAttribute('href').includes('#')) {
-    window.location.href = '/moahal/wordpress/' + '#' + targetId;
+    window.location.href = '/linkYouMarketing/wordpress/' + '#' + targetId;
       return;
   }
       if (targetSection) {
@@ -130,6 +140,9 @@ if (isHomePage() && this.getAttribute('href').includes('#')) {
 
   // Detect scroll and highlight active menu item (both desktop and mobile)
   function setActiveNav() {
+     if (!isHomePage()) {
+       return; // Skip if not on the home page
+    }
     const isMobile = window.innerWidth <= 768;
     const offset = isMobile ? navbarHeight + 50 : navbarHeight; // Match scroll offset in clicks
     const scrollPosition = window.scrollY + offset + 5; // Small buffer to avoid edge misfires
@@ -169,156 +182,242 @@ if (isHomePage() && this.getAttribute('href').includes('#')) {
   }
 
   window.addEventListener('scroll', setActiveNav);
+  
+  // Initialize Portfolio Functionality
+  initPortfolioFunctionality();
 });
 
-// purpose section tabs
-
-document.addEventListener('DOMContentLoaded', function () {
-  const tabs = document.querySelectorAll('.tab-btn');
-  const contents = document.querySelectorAll('.tab-content');
-
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', function () {
-      // Remove active styles from all tabs
-      tabs.forEach((t) => t.classList.remove('active-tab'));
-      // Hide all tab contents
-      contents.forEach((c) => c.classList.add('hidden'));
-
-      // Add active styles to clicked tab
-      this.classList.add('active-tab');
-
-      // Show the targeted tab content
-      const target = this.getAttribute('data-target');
-      document.getElementById(target).classList.remove('hidden');
+// Portfolio Filtering and Animations
+function initPortfolioFunctionality() {
+  // Portfolio Filtering
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const portfolioCards = document.querySelectorAll('.portfolio-card');
+  
+  if (filterButtons.length > 0 && portfolioCards.length > 0) {
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const filter = this.getAttribute('data-filter');
+        
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        // Filter portfolio items
+        portfolioCards.forEach(card => {
+          if (filter === 'all' || card.classList.contains(filter)) {
+            card.classList.remove('hidden');
+            card.style.display = 'block';
+          } else {
+            card.classList.add('hidden');
+            card.style.display = 'none';
+          }
+        });
+      });
     });
-  });
-});
-
-// purpose section tabs for mobile
-const headers = document.querySelectorAll('.import-accordion-header');
-
-headers.forEach((header) => {
-  header.addEventListener('click', () => {
-    const body = header.nextElementSibling;
-    const isOpen = body.classList.contains('open');
-
-    // Close all other bodies
-    document.querySelectorAll('.import-accordion-body').forEach((el) => {
-      if (el !== body) {
-        el.style.maxHeight = '0px';
-        el.classList.remove('open');
+  }
+  
+  // Stats Counter Animation
+  function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+    
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      element.textContent = Math.floor(current);
+    }, 16);
+  }
+  
+  // Intersection Observer for animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.animationPlayState = 'running';
+        
+        // Animate counters when they come into view
+        if (entry.target.classList.contains('stats-counter')) {
+          animateCounter(entry.target);
+        }
       }
     });
-
-    // Toggle clicked one
-    if (isOpen) {
-      body.style.maxHeight = '0px';
-      body.classList.remove('open');
-
-      // Scroll to header (even if collapsing)
-      setTimeout(() => {
-        const offset = 220;
-        const y = header.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 300);
-    } else {
-      body.classList.add('open');
-      body.style.maxHeight = body.scrollHeight + 'px';
-
-      // Delay scroll slightly longer to allow full collapse + expand transition
-      setTimeout(() => {
-        const offset = 220;
-        const y = header.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 400); // Slightly longer to account for full layout update
+  }, observerOptions);
+  
+  // Observe animated elements
+  document.querySelectorAll('[class*="animate-"]').forEach(el => {
+    if (el.style.animationPlayState !== 'running') {
+      el.style.animationPlayState = 'paused';
+      observer.observe(el);
     }
   });
-});
-
-// Ensure any open body on load is fully shown
-window.addEventListener('load', () => {
-  document.querySelectorAll('.import-accordion-body.open').forEach((body) => {
-    body.style.maxHeight = body.scrollHeight + 'px';
+  
+  // Observe stats counters
+  document.querySelectorAll('.stats-counter').forEach(el => {
+    observer.observe(el);
   });
-});
+}
 
-// swiper initialization for how it works section
-document.addEventListener('DOMContentLoaded', function () {
-  const swiperContainer = document.querySelector('.mySwiper');
-  let hasTriggered = false;
-  let hasStopped = false;
+// ===== TESTIMONIAL CAROUSEL FUNCTIONALITY =====
+  function initTestimonialCarousel() {
+    const carousel = document.querySelector('.testimonials-carousel');
+    if (!carousel) return;
 
-  const swiper = new Swiper('.mySwiper', {
-    loop: false,
-    autoplay: false, // Start autoplay manually
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    on: {
-      slideChange: function () {
-        // Stop autoplay at third slide, go back to first, and stop forever
-        if (!hasStopped && this.activeIndex === 2) {
-          hasStopped = true;
+    const track = carousel.querySelector('.testimonials-track');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    
+    const totalSlides = parseInt(carousel.dataset.total);
+    
+    let currentPage = 0;
 
-          setTimeout(() => {
-            swiper.slideTo(0); // Return to first slide
-            swiper.autoplay.stop(); // Stop autoplay forever
-          }, 1000);
+    function updateCarousel() {
+      const translateX = -currentPage * 100;
+      track.style.transform = `translateX(${translateX}%)`;
+      
+      // Update indicators
+      indicators.forEach((indicator, index) => {
+        indicator.classList.remove('active', 'bg-[#3773C9]');
+        indicator.classList.add('bg-gray-300');
+        if (index === currentPage) {
+          indicator.classList.add('active', 'bg-[#3773C9]');
+          indicator.classList.remove('bg-gray-300');
         }
-      },
-    },
-  });
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && !hasTriggered) {
-        hasTriggered = true;
-
-        // Start autoplay manually once visible
-        swiper.params.autoplay = {
-          delay: 1000,
-          disableOnInteraction: false,
-        };
-        swiper.autoplay.start();
+      });
+      
+      // Update button states
+      if (prevBtn) {
+        prevBtn.style.opacity = currentPage === 0 ? '0.5' : '1';
+        prevBtn.style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
       }
-    },
-    { threshold: 0.5 } // 50% of swiper visible
-  );
+      if (nextBtn) {
+        nextBtn.style.opacity = currentPage === totalSlides - 1 ? '0.5' : '1';
+        nextBtn.style.pointerEvents = currentPage === totalSlides - 1 ? 'none' : 'auto';
+      }
+    }
 
-  if (swiperContainer) {
-    observer.observe(swiperContainer);
+    function nextSlide() {
+      if (currentPage < totalSlides - 1) {
+        currentPage++;
+        updateCarousel();
+      }
+    }
+
+    function prevSlide() {
+      if (currentPage > 0) {
+        currentPage--;
+        updateCarousel();
+      }
+    }
+
+    function goToSlide(page) {
+      currentPage = page;
+      updateCarousel();
+    }
+
+    // Event listeners
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Auto-play functionality (optional)
+    let autoPlayInterval;
+    
+    function startAutoPlay() {
+      autoPlayInterval = setInterval(() => {
+        if (currentPage < totalSlides - 1) {
+          nextSlide();
+        } else {
+          currentPage = 0;
+          updateCarousel();
+        }
+      }, 5000); // Change slide every 5 seconds
+    }
+
+    function stopAutoPlay() {
+      clearInterval(autoPlayInterval);
+    }
+
+    // Start auto-play
+    startAutoPlay();
+
+    // Pause auto-play on hover
+    if (carousel) {
+      carousel.addEventListener('mouseenter', stopAutoPlay);
+      carousel.addEventListener('mouseleave', startAutoPlay);
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (currentPage >= totalSlides) {
+        currentPage = totalSlides - 1;
+      }
+      updateCarousel();
+    });
+
+    // Touch/swipe support for mobile
+    let startX = 0;
+    let isDragging = false;
+
+    if (track) {
+      track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        stopAutoPlay();
+      });
+
+      track.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+      });
+
+      track.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > 50) { // Minimum swipe distance
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+        
+        isDragging = false;
+        startAutoPlay();
+      });
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (carousel && carousel.querySelector(':hover')) {
+        if (e.key === 'ArrowLeft') {
+          prevSlide();
+        } else if (e.key === 'ArrowRight') {
+          nextSlide();
+        }
+      }
+    });
+
+    // Initialize
+    updateCarousel();
   }
-});
 
-//  faqs section accordion
-document.querySelectorAll('.accordion-toggle').forEach((button) => {
-  button.addEventListener('click', () => {
-    const parent = button.closest('.accordion');
-    parent.classList.toggle('accordion-open');
-  });
-});
+initPortfolioFunctionality();
+initTestimonialCarousel();
 
-// notification menu
-const notificationButtons = document.querySelectorAll('.notification-button');
-const notificationMenu = document.getElementById('notification-menu');
-const notificationOverlay = document.getElementById('notification-overlay');
-const closeNotifications = document.getElementById('close-notifications');
 
-notificationButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    notificationMenu.classList.remove('translate-x-full');
-    notificationOverlay.classList.remove('hidden');
-  });
-});
-
-closeNotifications.addEventListener('click', () => {
-  notificationMenu.classList.add('translate-x-full');
-  notificationOverlay.classList.add('hidden');
-});
-
-// Optional: close panel when clicking the overlay
-notificationOverlay.addEventListener('click', () => {
-  notificationMenu.classList.add('translate-x-full');
-  notificationOverlay.classList.add('hidden');
-});

@@ -13,7 +13,11 @@
 //Required Acf Blocks
 require_once('acf-blocks.php');
 
+//Required Post Type Services
+require_once('inc/post-types/service.php');
 
+//Required ACF Fields for About Us
+require_once('inc/acf-fields-about-us.php');
 
 add_action(
 	'after_setup_theme',
@@ -83,14 +87,14 @@ add_action(
 );
 
 // Register Primary Menu Location
-function moahal_register_menus() {
+function linkYouMarketing_register_menus() {
     register_nav_menus(
         array(
-            'primary' => __('Primary Menu', 'moahal'), // Custom menu location
+            'primary' => __('Primary Menu', 'linkYouMarketing'), // Custom menu location
         )
     );
 }
-add_action('after_setup_theme', 'moahal_register_menus');
+add_action('after_setup_theme', 'linkYouMarketing_register_menus');
 
 /**
  * Set the content width in pixels, based on the theme's design and stylesheet.
@@ -162,10 +166,10 @@ add_action( 'wp_enqueue_scripts', function () {
 );
 
 
-function moahal_enqueue_styles() {
+function linkYouMarketing_enqueue_styles() {
     wp_enqueue_style('tailwind', get_template_directory_uri() . '/assets/css/tailwind.css', [], null);
 }
-add_action('wp_enqueue_scripts', 'moahal_enqueue_styles');
+add_action('wp_enqueue_scripts', 'linkYouMarketing_enqueue_styles');
 
 
 
