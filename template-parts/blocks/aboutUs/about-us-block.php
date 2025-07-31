@@ -1,311 +1,509 @@
-<?php 
-// Get ACF fields for dynamic content
-$company_description = get_field('company_description') ?: 'LinkYou.Marketing Is One of The Best Digital Marketing Agencies Mainly Located in Canada, Milton. Let us take care of your online presence!';
-$team_members = get_field('team_members');
-$company_stats = get_field('company_stats');
-$services = get_field('services');
+<?php
+/**
+ * About Us Block Template
+ * Includes: Hero, Vision, Mission, Founder Story, Values, Team, and CTA sections
+ */
+
+// Get ACF fields with fallback values
+$hero_title = get_field('about_hero_title') ?: 'About LinkYou Academy';
+$hero_subtitle = get_field('about_hero_subtitle') ?: 'Empowering students to achieve their dreams through education and immigration guidance';
+$hero_image = get_field('about_hero_image') ?: '';
+
+// Vision sections
+$vision_title = get_field('about_vision_title') ?: 'Our Vision';
+$vision_content = get_field('about_vision_content') ?: 'To be the leading bridge connecting students worldwide to quality education opportunities, fostering global citizenship and cross-cultural understanding.';
+$vision_icon = get_field('about_vision_icon') ?: 'eye';
+
+// Mission section
+$mission_title = get_field('about_mission_title') ?: 'Our Mission';
+$mission_content = get_field('about_mission_content') ?: 'We provide comprehensive educational guidance and immigration support, helping students navigate their journey to study abroad with confidence and success.';
+$mission_icon = get_field('about_mission_icon') ?: 'compass';
+
+// Founder section
+$founder_title = get_field('about_founder_title') ?: 'Founder\'s Story';
+$founder_name = get_field('about_founder_name') ?: 'John Doe';
+$founder_position = get_field('about_founder_position') ?: 'Founder & CEO';
+$founder_story = get_field('about_founder_story') ?: 'Our founder\'s journey began as an international student who experienced the challenges of studying abroad firsthand. This personal experience sparked the vision to create LinkYou Academy - a platform dedicated to supporting students in their educational journey.';
+$founder_image = get_field('about_founder_image') ?: '';
+$founder_quote = get_field('about_founder_quote') ?: '"Education is the passport to the future, for tomorrow belongs to those who prepare for it today."';
+
+// Values section
+$values_title = get_field('about_values_title') ?: 'Our Core Values';
+$values = get_field('about_values') ?: array();
+
+// Default values if none exist
+if (empty($values)) {
+  $values = array(
+    array(
+      'value_icon' => 'shield-check',
+      'value_title' => 'Integrity',
+      'value_description' => 'We maintain the highest standards of honesty and transparency in all our interactions.'
+    ),
+    array(
+      'value_icon' => 'academic-cap',
+      'value_title' => 'Excellence',
+      'value_description' => 'We strive for excellence in every service we provide to ensure student success.'
+    ),
+    array(
+      'value_icon' => 'heart',
+      'value_title' => 'Compassion',
+      'value_description' => 'We understand the challenges of studying abroad and provide empathetic support.'
+    ),
+    array(
+      'value_icon' => 'globe',
+      'value_title' => 'Global Perspective',
+      'value_description' => 'We embrace diversity and promote cross-cultural understanding and learning.'
+    )
+  );
+}
+
+// Team section
+$team_title = get_field('about_team_title') ?: 'Meet Our Team';
+$team_subtitle = get_field('about_team_subtitle') ?: 'Our dedicated professionals are here to guide you every step of the way';
+
+// CTA section
+$cta_title = get_field('about_cta_title') ?: 'Ready to Start Your Journey?';
+$cta_description = get_field('about_cta_description') ?: 'Join thousands of students who have successfully achieved their educational dreams with our guidance.';
+$cta_button_text = get_field('about_cta_button_text') ?: 'Get Started Today';
+$cta_button_link = get_field('about_cta_button_link') ?: '#contact';
+
+// Icon mapping function
+function get_icon_svg($icon_name)
+{
+  $icons = array(
+    'eye' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>',
+    'compass' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>',
+    'shield-check' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>',
+    'academic-cap' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>',
+    'heart' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
+    'lightbulb' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>',
+    'users' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z"/>',
+    'globe' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+  );
+  return $icons[$icon_name] ?? $icons['eye'];
+}
 ?>
 
+<!-- About Us Page -->
+<div class="about-us-page">
 
-<!-- Company Introduction Section -->
-<section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30 relative overflow-hidden">
-  <!-- Background Decoration -->
-  <div class="absolute inset-0 opacity-5">
-    <div class="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-20 right-20 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
-  </div>
-  
-  <div class="container mx-auto px-4 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <!-- Company Info -->
-      <div class="animate-slide-left">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-8">
-          About <span class="text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">LinkYou.Marketing</span>
-        </h2>
-        <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-          <?php echo esc_html($company_description); ?>
-        </p>
-        
-        <!-- Key Points -->
-        <div class="space-y-4">
-          <?php 
-          $key_points = [
-            'We are Result Oriented',
-            'We Create to Execute', 
-            'Our Experts Work Harder',
-            'We Resolve Problems',
-            'Our Minds are Always Fresh',
-            'We Manage Your Budget'
-          ];
-          $delay = 100;
-          foreach($key_points as $point): ?>
-            <div class="flex items-center animate-fade-up delay-<?php echo $delay; ?>">
-              <div class="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mr-4 animate-pulse"></div>
-              <span class="text-gray-700 font-medium"><?php echo esc_html($point); ?></span>
-            </div>
-            <?php $delay += 50; ?>
-          <?php endforeach; ?>
-        </div>
-        
-        <div class="mt-8 animate-scale delay-400">
-          <a href="#contact" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300">
-            Contact Us
-            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-            </svg>
-          </a>
-        </div>
+  <!-- Hero Section -->
+  <section
+    class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+
+    <!-- Background Image Overlay -->
+    <?php if ($hero_image): ?>
+      <div class="absolute inset-0 z-0">
+        <img src="<?php echo esc_url($hero_image); ?>" alt="About Us Hero" class="w-full h-full object-cover opacity-20">
       </div>
-      
-      <!-- Stats Cards -->
-      <div class="animate-slide-right">
-        <div class="grid grid-cols-2 gap-6">
-          <!-- Dynamic Stats from ACF -->
-          <?php if($company_stats): ?>
-            <?php $delay = 100; ?>
-            <?php foreach($company_stats as $stat): ?>
-              <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-up delay-<?php echo $delay; ?>">
-                <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text mb-2">
-                  <?php echo esc_html($stat['number'] ?: '00'); ?>
-                </div>
-                <div class="text-gray-600 font-medium">
-                  <?php echo esc_html($stat['label'] ?: 'Metric'); ?>
-                </div>
-              </div>
-              <?php $delay += 100; ?>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <!-- Fallback Stats -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-up delay-100">
-              <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text mb-2">5/5</div>
-              <div class="text-gray-600 font-medium">Stars Rated</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-up delay-200">
-              <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text mb-2">50+</div>
-              <div class="text-gray-600 font-medium">Projects</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-up delay-300">
-              <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text mb-2">100K+</div>
-              <div class="text-gray-600 font-medium">Lines of Code</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-up delay-400">
-              <div class="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text mb-2">50K+</div>
-              <div class="text-gray-600 font-medium">Followers</div>
-            </div>
-          <?php endif; ?>
-        </div>
+    <?php endif; ?>
+
+    <!-- Floating Background Objects -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div
+        class="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-full animate-float-gentle">
       </div>
+      <div
+        class="absolute top-1/4 right-20 w-24 h-24 bg-gradient-to-r from-purple-400/25 to-pink-500/25 rounded-full animate-float-slow">
+      </div>
+      <div
+        class="absolute bottom-20 left-1/4 w-40 h-40 bg-gradient-to-r from-green-400/15 to-teal-500/15 rounded-full animate-float-medium">
+      </div>
+      <div
+        class="absolute bottom-10 right-10 w-28 h-28 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-full animate-float-gentle"
+        style="animation-delay: -2s;"></div>
     </div>
-  </div>
-</section>
 
-<!-- What We Provide Section -->
-<section class="py-20 bg-white relative overflow-hidden">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="animate-fade-up text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-        What We Provide for Our <span class="text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">Clients</span>
-      </h2>
-      <p class="animate-fade-up delay-100 text-xl text-gray-600 max-w-3xl mx-auto">
-        And Much More ...
+    <!-- Hero Content -->
+    <div class="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in-scale hero-title">
+        <?php echo esc_html($hero_title); ?>
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed animate-slide-in-up"
+        style="animation-delay: 0.3s;">
+        <?php echo esc_html($hero_subtitle); ?>
       </p>
-      <div class="section-divider animate-scale delay-200"></div>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <?php if($services): ?>
-        <?php $delay = 100; ?>
-        <?php foreach($services as $service): ?>
-          <div class="service-card group animate-fade-up delay-<?php echo $delay; ?> bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-            <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-              <?php echo esc_html($service['icon'] ?: '📈'); ?>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-3">
-              <?php echo esc_html($service['title'] ?: 'Service Title'); ?>
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              <?php echo esc_html($service['description'] ?: 'Service description'); ?>
-            </p>
-          </div>
-          <?php $delay += 100; ?>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <!-- Fallback Services -->
-        <?php 
-        $services_list = [
-          ['icon' => '📈', 'title' => 'Effective Marketing Plans', 'description' => 'Strategic marketing solutions tailored to your business goals'],
-          ['icon' => '💻', 'title' => 'Analyzing & Developing Websites', 'description' => 'Modern, responsive websites that convert visitors into customers'],
-          ['icon' => '👥', 'title' => 'A Committed Team to Serve Your Business', 'description' => 'Dedicated professionals working exclusively for your success'],
-          ['icon' => '📊', 'title' => 'Monitoring & Evaluating Your Business', 'description' => 'Continuous analysis and optimization of your business performance']
-        ];
-        
-        $delay = 100;
-        foreach($services_list as $service): ?>
-          <div class="service-card group animate-fade-up delay-<?php echo $delay; ?> bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-            <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-              <?php echo $service['icon']; ?>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-3">
-              <?php echo esc_html($service['title']); ?>
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              <?php echo esc_html($service['description']); ?>
-            </p>
-          </div>
-          <?php $delay += 100; ?>
-        <?php endforeach; ?>
-      <?php endif; ?>
-    </div>
-  </div>
-</section>
-
-<!-- Why Choose Us Section -->
-<section class="py-20 bg-gradient-to-br from-blue-500 to-purple-600 text-white relative overflow-hidden">
-  <!-- Animated Background -->
-  <div class="absolute inset-0">
-    <div class="float-element absolute top-20 left-20 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-    <div class="float-element absolute bottom-20 right-20 w-40 h-40 bg-white/10 rounded-full blur-2xl" style="animation-delay: 2s;"></div>
-  </div>
-  
-  <div class="container mx-auto px-4 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <!-- Content -->
-      <div class="animate-slide-left">
-        <h2 class="text-4xl md:text-5xl font-bold mb-8">
-          Why <span class="text-yellow-300">LinkYou.Marketing</span>?
-        </h2>
-        <div class="space-y-6">
-          <p class="text-xl leading-relaxed opacity-90">
-            We know your business is successful, but LinkYou.Marketing could take you even further
-          </p>
-          <p class="text-lg leading-relaxed opacity-90">
-            We customize a package specifically for you based on your business' needs and we take your business' success seriously
-          </p>
-        </div>
-        
-        <!-- Features List -->
-        <div class="mt-8 space-y-4">
-          <?php 
-          $features = [
-            'Customized Solutions for Your Business',
-            'Result-Driven Marketing Strategies', 
-            'Experienced Team of Professionals',
-            '24/7 Support and Monitoring',
-            'Proven Track Record of Success'
-          ];
-          $delay = 100;
-          foreach($features as $feature): ?>
-            <div class="flex items-center animate-fade-up delay-<?php echo $delay; ?>">
-              <div class="w-2 h-2 bg-yellow-300 rounded-full mr-4 animate-pulse"></div>
-              <span class="text-white/90"><?php echo esc_html($feature); ?></span>
-            </div>
-            <?php $delay += 50; ?>
-          <?php endforeach; ?>
-        </div>
+      <div class="animate-slide-in-up" style="animation-delay: 0.6s;">
+        <a href="#vision"
+          class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/25">
+          <span>Discover Our Story</span>
+          <svg class="w-5 h-5 ml-2 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </a>
       </div>
-      
-      <!-- Visual Element -->
-      <div class="animate-slide-right">
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div class="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+        <div class="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision & Mission Section -->
+  <section id="vision" class="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+        <!-- Vision -->
+        <div class="relative group">
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+            <!-- Icon -->
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <?php echo get_icon_svg($vision_icon); ?>
+              </svg>
+            </div>
+
+            <h2 class="text-3xl font-bold text-gray-900 mb-4 group-hover:text-cyan-600 transition-colors">
+              <?php echo esc_html($vision_title); ?>
+            </h2>
+
+            <div class="text-gray-600 leading-relaxed">
+              <?php echo wp_kses_post($vision_content); ?>
+            </div>
+
+            <!-- Decorative elements -->
+            <div
+              class="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10">
+            </div>
+          </div>
+        </div>
+
+        <!-- Mission -->
+        <div class="relative group">
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+            <!-- Icon -->
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full mb-6 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <?php echo get_icon_svg($mission_icon); ?>
+              </svg>
+            </div>
+
+            <h2 class="text-3xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
+              <?php echo esc_html($mission_title); ?>
+            </h2>
+
+            <div class="text-gray-600 leading-relaxed">
+              <?php echo wp_kses_post($mission_content); ?>
+            </div>
+
+            <!-- Decorative elements -->
+            <div
+              class="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder Story Section -->
+  <section class="py-20 bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <?php echo esc_html($founder_title); ?>
+        </h2>
+        <div class="w-24 h-1 bg-gradient-to-r from-cyan-500 to-blue-600 mx-auto"></div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+        <!-- Founder Image -->
         <div class="relative">
-          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-            <div class="text-center">
-              <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full flex items-center justify-center text-4xl animate-bounce">
-                🚀
+          <div class="relative group">
+            <?php if ($founder_image): ?>
+              <img src="<?php echo esc_url($founder_image); ?>" alt="<?php echo esc_attr($founder_name); ?>"
+                class="w-full max-w-md mx-auto rounded-2xl shadow-2xl group-hover:shadow-3xl transition-all duration-500 transform group-hover:scale-105">
+            <?php else: ?>
+              <!-- Placeholder if no image -->
+              <div
+                class="w-full max-w-md h-96 mx-auto bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl shadow-2xl flex items-center justify-center">
+                <svg class="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
               </div>
-              <h3 class="text-2xl font-bold mb-4">Ready to Grow?</h3>
-              <p class="text-white/80 mb-6">Let's take your business to the next level</p>
-              <button class="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors duration-300 transform hover:scale-105">
-                Get Started Today
-              </button>
+            <?php endif; ?>
+
+            <!-- Decorative elements -->
+            <div
+              class="absolute -top-4 -left-4 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-300 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+            </div>
+            <div
+              class="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-purple-200 to-pink-300 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-500">
             </div>
           </div>
         </div>
+
+        <!-- Founder Content -->
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-3xl font-bold text-gray-900 mb-2"><?php echo esc_html($founder_name); ?></h3>
+            <p class="text-xl text-cyan-600 font-semibold mb-6"><?php echo esc_html($founder_position); ?></p>
+          </div>
+
+          <div class="text-gray-600 leading-relaxed space-y-4">
+            <?php echo wp_kses_post($founder_story); ?>
+          </div>
+
+          <!-- Quote -->
+          <div class="relative bg-gradient-to-r from-cyan-50 to-blue-50 p-6 rounded-xl border-l-4 border-cyan-500">
+            <svg class="absolute top-2 left-2 w-8 h-8 text-cyan-300 opacity-50" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z" />
+            </svg>
+            <p class="text-lg italic text-gray-700 pl-6"><?php echo esc_html($founder_quote); ?></p>
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Platforms Support Section -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="animate-fade-up text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-        Our Services and Platforms <span class="text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">Support Your Business</span>
-      </h2>
-      <div class="section-divider animate-scale delay-200"></div>
-    </div>
-    
-    <!-- Platforms Grid -->
-    <div class="flex flex-wrap justify-center items-center gap-12">
-      <?php 
-      $platforms = [
-        ['name' => 'Facebook', 'icon' => '📘', 'color' => 'from-blue-600 to-blue-700'],
-        ['name' => 'LinkedIn', 'icon' => '💼', 'color' => 'from-blue-700 to-blue-800'],
-        ['name' => 'Instagram', 'icon' => '📷', 'color' => 'from-pink-500 to-purple-600'],
-        ['name' => 'Twitter', 'icon' => '🐦', 'color' => 'from-blue-400 to-blue-500'],
-        ['name' => 'YouTube', 'icon' => '📺', 'color' => 'from-red-500 to-red-600'],
-        ['name' => 'TikTok', 'icon' => '🎵', 'color' => 'from-gray-800 to-gray-900']
-      ];
-      
-      $delay = 100;
-      foreach($platforms as $platform): ?>
-        <div class="platform-card group animate-fade-up delay-<?php echo $delay; ?> text-center transform hover:scale-110 transition-all duration-300">
-          <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br <?php echo $platform['color']; ?> rounded-2xl flex items-center justify-center text-3xl text-white group-hover:rotate-12 transition-transform duration-300 shadow-lg">
-            <?php echo $platform['icon']; ?>
-          </div>
-          <h3 class="font-semibold text-gray-800"><?php echo esc_html($platform['name']); ?></h3>
-        </div>
-        <?php $delay += 100; ?>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
+  <!-- Core Values Section -->
+  <section class="py-20 bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-<!-- Team Members Section -->
-<?php if($team_members): ?>
-<section class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="animate-fade-up text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-        Meet Our <span class="text-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text">Team</span>
-      </h2>
-      <p class="animate-fade-up delay-100 text-xl text-gray-600 max-w-3xl mx-auto">
-        The passionate professionals behind LinkYou.Marketing
-      </p>
-      <div class="section-divider animate-scale delay-200"></div>
-    </div>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <?php $delay = 100; ?>
-      <?php foreach($team_members as $member): ?>
-        <div class="team-card group animate-fade-up delay-<?php echo $delay; ?> bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
-          <?php if($member['image']): ?>
-            <div class="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-gradient-to-r from-blue-500 to-purple-600">
-              <img src="<?php echo esc_url($member['image']['url']); ?>" alt="<?php echo esc_attr($member['name']); ?>" class="w-full h-full object-cover">
-            </div>
-          <?php else: ?>
-            <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold">
-              <?php echo esc_html(substr($member['name'], 0, 1)); ?>
-            </div>
-          <?php endif; ?>
-          
-          <div class="text-center">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">
-              <?php echo esc_html($member['name']); ?>
-            </h3>
-            <p class="text-blue-600 font-semibold mb-3">
-              <?php echo esc_html($member['position']); ?>
-            </p>
-            <?php if($member['bio']): ?>
-              <p class="text-gray-600 leading-relaxed">
-                <?php echo esc_html($member['bio']); ?>
+      <!-- Section Header -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+          <?php echo esc_html($values_title); ?>
+        </h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+          The principles that guide everything we do
+        </p>
+      </div>
+
+      <!-- Values Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-<?php echo count($values) > 3 ? '4' : count($values); ?> gap-8">
+        <?php foreach ($values as $index => $value): ?>
+          <div class="group relative">
+            <div
+              class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 text-center transition-all duration-500 hover:bg-white/20 hover:scale-105 hover:shadow-2xl">
+
+              <!-- Icon -->
+              <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full mb-6 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <?php echo get_icon_svg($value['value_icon']); ?>
+                </svg>
+              </div>
+
+              <h3 class="text-xl font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors">
+                <?php echo esc_html($value['value_title']); ?>
+              </h3>
+
+              <p class="text-gray-300 leading-relaxed">
+                <?php echo esc_html($value['value_description']); ?>
               </p>
-            <?php endif; ?>
+
+              <!-- Decorative border -->
+              <div
+                class="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-cyan-400/30 transition-all duration-500">
+              </div>
+            </div>
           </div>
-        </div>
-        <?php $delay += 100; ?>
-      <?php endforeach; ?>
+        <?php endforeach; ?>
+      </div>
     </div>
-  </div>
-</section>
-<?php endif; ?>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-700 relative overflow-hidden">
+
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute inset-0"
+        style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 20px 20px;">
+      </div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        <?php echo esc_html($cta_title); ?>
+      </h2>
+      <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+        <?php echo esc_html($cta_description); ?>
+      </p>
+      <a href="<?php echo esc_url($cta_button_link); ?>"
+        class="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+        <?php echo esc_html($cta_button_text); ?>
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<style>
+  /* About Us Specific Animations */
+  @keyframes float-gentle {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-10px) rotate(2deg);
+    }
+  }
+
+  @keyframes float-slow {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-15px) rotate(-2deg);
+    }
+  }
+
+  @keyframes float-medium {
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(1deg);
+    }
+  }
+
+  @keyframes fade-in-scale {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slide-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-float-gentle {
+    animation: float-gentle 6s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-float-medium {
+    animation: float-medium 7s ease-in-out infinite;
+  }
+
+  .animate-fade-in-scale {
+    animation: fade-in-scale 1s ease-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slide-in-up 1s ease-out;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4);
+    background-size: 300% 300%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Hero Title Gradient Effect */
+  .hero-title {
+    background: linear-gradient(45deg, #06b6d4, #3b82f6, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 400% 400%;
+    animation: hero-gradient 4s ease-in-out infinite;
+  }
+
+  @keyframes hero-gradient {
+
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Hover Effects */
+  .group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+  }
+
+  .group:hover .group-hover\:text-cyan-600 {
+    color: #0891b2;
+  }
+
+  .group:hover .group-hover\:text-purple-600 {
+    color: #9333ea;
+  }
+
+  .group:hover .group-hover\:text-cyan-300 {
+    color: #67e8f9;
+  }
+
+  .group:hover .group-hover\:shadow-3xl {
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .about-us-page .grid.lg\:grid-cols-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .about-us-page .grid.lg\:grid-cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-us-page .text-5xl.md\:text-7xl {
+      font-size: 3rem;
+    }
+  }
+</style>

@@ -1,577 +1,155 @@
 <?php
 $title = get_field('main_heading');
-$description = get_field('subheading');
+$subtitle = get_field('subheading');
+$description = get_field('description');
+$background_image = get_field('background_image');
+$services_button_text = get_field('services_button_text') ?: 'Explore Services';
+$application_button_text = get_field('application_button_text') ?: 'Start Application';
+$services_button_link = get_field('services_button_url') ?: '#services';
+$application_button_link = get_field('application_button_url') ?: '#application';
+// Default content for elegant university referral website
+$default_title = $title ?: "Shape Your Academic Future";
+$default_subtitle = $subtitle ?: "Transform Your Dreams Into Reality";
+$default_description = $description ?: "Connect with world-renowned universities and unlock unlimited possibilities. We guide ambitious students through their journey to academic excellence and global success.";
 ?>
 
-<section class="relative  bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden" id="hero">
-  <!-- Background Elements -->
-  <div class="absolute inset-0">
-    <!-- Grid Pattern -->
-    <div class="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]">
+<section class="hero-elegant pt-14  pb-20 relative min-h-screen flex items-center justify-center overflow-hidden">
+  
+  <!-- Sophisticated Background with Animated Geometric Patterns -->
+  <div class="absolute inset-0 hero-bg-layer">
+    <?php if ($background_image): ?>
+      <img src="<?php echo esc_url($background_image['url']); ?>" 
+           alt="<?php echo esc_attr($background_image['alt']); ?>"
+           class="w-full h-full object-cover">
+    <?php else: ?>
+      <!-- Elegant Gradient Background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-neutral-900"></div>
+    <?php endif; ?>
+    
+    <!-- Sophisticated Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/80 via-primary-800/60 to-primary-900/80"></div>
+    
+    <!-- Animated Geometric Elements -->
+    <div class="geometric-bg absolute inset-0">
+      <div class="geometric-shape shape-1"></div>
+      <div class="geometric-shape shape-2"></div>
+      <div class="geometric-shape shape-3"></div>
+      <div class="geometric-shape shape-4"></div>
     </div>
-
-    <!-- Gradient Orbs -->
-    <div
-      class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse">
-    </div>
-    <div
-      class="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000">
-    </div>
-    <div
-      class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000">
-    </div>
-
-    <!-- Floating Elements -->
-    <div class="absolute top-1/4 right-1/4 w-4 h-4 bg-blue-400 rounded-full animate-bounce opacity-60"></div>
-    <div class="absolute top-1/3 right-1/3 w-6 h-6 bg-purple-400 rounded-full animate-pulse opacity-40"></div>
-    <div class="absolute bottom-1/4 right-1/5 w-3 h-3 bg-pink-400 rounded-full animate-ping opacity-50"></div>
-    <div
-      class="absolute top-2/3 right-1/6 w-2 h-2 bg-indigo-400 rounded-full animate-bounce opacity-70 animation-delay-1000">
-    </div>
-  </div>
-
-  <!-- Content -->
-  <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-2xl pt-[6rem] pb-[3rem] md:pt-[90px] md:pb-[90px]">
-      <div class="text-center">
-
-        <!-- Brand Badge -->
-        <div class="mb-6 sm:mb-8 flex justify-center">
-          <div
-            class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20 transition-all duration-300 hover:scale-105">
-            <span class="flex items-center space-x-2 font-semibold text-indigo-600">
-              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-              <span>LinkYou.Marketing</span>
-            </span>
-          </div>
-        </div>
-
-        <h1 class="text-3xl sm:text-4xl md:text-4xl  font-bold tracking-tight text-gray-900 leading-tight">
-          <?php if ($title): ?>
-            <?php
-            $title_clean = trim($title);
-
-            $predefined_lines = [
-              "Let Us Take Care of Your",
-              "Online Presence",
-              "and We'll Help You Get the",
-              "Business Hustle Off",
-              "of Your Shoulders"
-            ];
-
-            // Check if the title matches our expected content and use predefined split
-            if (strpos($title_clean, "Let Us Take Care") !== false && strpos($title_clean, "Online Presence") !== false) {
-              $title_lines = $predefined_lines;
-            } else {
-              // For other custom titles, split intelligently to create 5 lines max
-              $words = explode(' ', $title_clean);
-              $total_words = count($words);
-
-              if ($total_words <= 10) {
-                // Split into 3 lines for shorter titles
-                $per_line = ceil($total_words / 3);
-                $title_lines = [
-                  implode(' ', array_slice($words, 0, $per_line)),
-                  implode(' ', array_slice($words, $per_line, $per_line)),
-                  implode(' ', array_slice($words, $per_line * 2))
-                ];
-              } else {
-                // Split into 5 lines for longer titles to match static structure
-                $per_line = ceil($total_words / 5);
-                $title_lines = [
-                  implode(' ', array_slice($words, 0, $per_line)),
-                  implode(' ', array_slice($words, $per_line, $per_line)),
-                  implode(' ', array_slice($words, $per_line * 2, $per_line)),
-                  implode(' ', array_slice($words, $per_line * 3, $per_line)),
-                  implode(' ', array_slice($words, $per_line * 4))
-                ];
-              }
-            }
-
-            // Remove empty lines
-            $title_lines = array_filter($title_lines, function ($line) {
-              return !empty(trim($line));
-            });
-
-            // Animation delays matching static version exactly
-            $delay_classes = ['', 'animation-delay-300', 'animation-delay-600', 'animation-delay-900', 'animation-delay-1200'];
-
-            foreach ($title_lines as $index => $line):
-              $line = trim($line);
-              if (!empty($line)):
-                $delay_class = isset($delay_classes[$index]) ? $delay_classes[$index] : '';
-
-                // Apply gradient pattern EXACTLY like static version:
-                // Index 1 (2nd line) = indigo-purple gradient
-                // Index 3 (4th line) = purple-pink gradient  
-                // All others = normal text
-                if ($index == 1): ?>
-                  <span
-                    class="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent animate-fade-in-up <?php echo $delay_class; ?>">
-                    <?php echo esc_html($line); ?>
-                  </span>
-                <?php elseif ($index == 3): ?>
-                  <span
-                    class="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent animate-fade-in-up <?php echo $delay_class; ?>">
-                    <?php echo esc_html($line); ?>
-                  </span>
-                <?php else: ?>
-                  <span class="block animate-fade-in-up <?php echo $delay_class; ?>">
-                    <?php echo esc_html($line); ?>
-                  </span>
-                <?php endif;
-              endif;
-            endforeach;
-            ?>
-          <?php else: ?>
-            <span class="block animate-fade-in-up">Let Us Take Care of Your</span>
-            <span
-              class="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent animate-fade-in-up animation-delay-300">
-              Online Presence
-            </span>
-            <span class="block animate-fade-in-up animation-delay-600">and We'll Help You Get the</span>
-            <span
-              class="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent animate-fade-in-up animation-delay-900">
-              Business Hustle Off
-            </span>
-            <span class="block animate-fade-in-up animation-delay-1200">of Your Shoulders</span>
-          <?php endif; ?>
-        </h1>
-
-
-        <!-- Description -->
-        <p
-          class="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl leading-7 sm:leading-8 text-gray-600 animate-fade-in-up animation-delay-1500 max-w-2xl lg:max-w-3xl mx-auto px-2 sm:px-0">
-          <?php if ($description): ?>
-            <?php echo $description; ?>
-          <?php else: ?>
-            We are delighted to have a powerful and experienced team that will customize everything to your needs to make
-            your business standout
-          <?php endif; ?>
-        </p>
-
-        <!-- CTA Buttons -->
-        <div
-          class="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-x-6 animate-fade-in-up animation-delay-1800 px-4 sm:px-0">
-          <a href="#contact" id="hero-cta"
-            class="group relative inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white transition-all duration-200 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 hover:scale-105 hover:shadow-lg w-full sm:w-auto max-w-xs sm:max-w-none">
-            <!-- Button shine effect -->
-            <div
-              class="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shine transition-opacity duration-500">
-            </div>
-            <span class="relative flex items-center space-x-2">
-              <svg class="h-4 w-4 transition-transform duration-200 group-hover:scale-110" fill="currentColor"
-                viewBox="0 0 24 24">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
-              <span>Contact Us</span>
-            </span>
-          </a>
-
-          <a href="#services"
-            class="inline-flex items-center space-x-2 text-sm sm:text-base font-semibold leading-6 text-gray-900 transition-all duration-200 hover:text-indigo-600 group py-3 sm:py-0">
-            <span>Learn more</span>
-            <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" fill="currentColor"
-              viewBox="0 0 24 24">
-              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-            </svg>
-          </a>
-        </div>
-
-
-      </div>
-    </div>
-
-    <!-- Right Side Illustration -->
-    <div class="absolute inset-y-0 right-0 -z-10 w-full overflow-hidden ring-1 ring-white/5 lg:w-1/2 hidden sm:block">
-      <svg
-        class="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-        aria-hidden="true">
-        <defs>
-          <pattern id="hero-pattern" width="200" height="200" x="100%" y="-1" patternUnits="userSpaceOnUse">
-            <path d="M.5 200V.5H200" fill="none" />
-          </pattern>
-        </defs>
-        <svg x="100%" y="-1" class="overflow-visible fill-gray-50">
-          <path d="m-1 0 1-1v1z" stroke="none" />
-        </svg>
-        <rect width="100%" height="100%" stroke-width="0" fill="url(#hero-pattern)" />
-      </svg>
-
-      <!-- Floating Cards - Hidden on mobile, visible on larger screens -->
-      <div class="absolute top-1/4 right-8 lg:right-12 transform animate-float hidden md:block">
-        <div class="bg-white rounded-lg shadow-lg p-3 lg:p-4 w-40 lg:w-48 border border-gray-100">
-          <div class="flex items-center space-x-2 lg:space-x-3 mb-2 lg:mb-3">
-            <div class="w-6 lg:w-8 h-6 lg:h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <svg class="w-3 lg:w-4 h-3 lg:h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
-              </svg>
-            </div>
-            <div>
-              <p class="text-xs lg:text-sm font-medium text-gray-900">Traffic Growth</p>
-              <p class="text-xs text-gray-500">+125% this month</p>
-            </div>
-          </div>
-          <div class="space-y-2">
-            <div class="flex justify-between text-xs">
-              <span class="text-gray-500">Progress</span>
-              <span class="text-gray-900 font-medium">87%</span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-1.5">
-              <div class="bg-green-500 h-1.5 rounded-full w-[87%] animate-grow"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="absolute top-1/2 right-4 lg:right-8 transform animate-float animation-delay-1000 hidden md:block">
-        <div class="bg-white rounded-lg shadow-lg p-3 lg:p-4 w-32 lg:w-40 border border-gray-100">
-          <div class="text-center">
-            <div
-              class="w-10 lg:w-12 h-10 lg:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <svg class="w-5 lg:w-6 h-5 lg:h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            </div>
-            <p class="text-base lg:text-lg font-semibold text-gray-900">4.9/5</p>
-            <p class="text-xs text-gray-500">Client Rating</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="absolute bottom-1/4 right-8 lg:right-16 transform animate-float animation-delay-2000 hidden md:block">
-        <div class="bg-white rounded-lg shadow-lg p-3 lg:p-4 w-36 lg:w-44 border border-gray-100">
-          <div class="flex items-center space-x-2 lg:space-x-3">
-            <div class="w-6 lg:w-8 h-6 lg:h-8 bg-purple-100 rounded-full flex items-center justify-center">
-              <svg class="w-3 lg:w-4 h-3 lg:h-4 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z" />
-              </svg>
-            </div>
-            <div>
-              <p class="text-xs lg:text-sm font-medium text-gray-900">ROI Increase</p>
-              <p class="text-base lg:text-lg font-bold text-purple-600">340%</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    
+    <!-- Floating Academic Icons -->
+    <div class="floating-icons absolute inset-0">
+      <div class="floating-icon icon-1">📚</div>
+      <div class="floating-icon icon-2">🎓</div>
+      <div class="floating-icon icon-3">🌟</div>
+      <div class="floating-icon icon-4">🚀</div>
+      <div class="floating-icon icon-5">💡</div>
     </div>
   </div>
+
+  <!-- Main Content Container -->
+  <div class="relative z-20 container mx-auto px-6 lg:px-8 text-center max-w-6xl pb-20 pt-9">
+    
+    <!-- Animated Badge -->
+    <div class="hero-badge mb-8 inline-block opacity-0 animate-fade-slide-up" style="animation-delay: 0.2s;">
+      <div class="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 font-medium text-sm">
+        <span class="w-2 h-2 bg-success-400 rounded-full mr-3 animate-pulse"></span>
+        Trusted by 10,000+ Students Worldwide
+      </div>
+    </div>
+
+    <!-- Main Heading with Advanced Typography -->
+    <div class="hero-title-container mb-8 opacity-0 animate-fade-slide-up" style="animation-delay: 0.4s;">
+      <h1 class="hero-main-title text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-none mb-4">
+        <span class="block mb-2 hero-word" style="animation-delay: 0.6s;"><?php echo explode(' ', $default_title)[0]; ?></span>
+        <span class="block mb-2 hero-word text-transparent bg-clip-text bg-gradient-to-r from-primary-300 via-secondary-400 to-success-400" style="animation-delay: 0.8s;">
+          <?php echo explode(' ', $default_title)[1]; ?>
+        </span>
+        <span class="block hero-word" style="animation-delay: 1s;"><?php echo explode(' ', $default_title)[2]; ?></span>
+      </h1>
+      
+      <!-- Elegant Subtitle -->
+      <h2 class="hero-subtitle text-2xl sm:text-3xl lg:text-4xl font-light text-primary-200 tracking-wide opacity-0 animate-fade-slide-up" style="animation-delay: 1.2s;">
+        <?php echo esc_html($default_subtitle); ?>
+      </h2>
+    </div>
+
+    <!-- Description with Typewriter Effect -->
+    <div class="hero-description mb-12 opacity-0 animate-fade-slide-up" style="animation-delay: 1.4s;">
+      <p class="text-lg sm:text-xl lg:text-2xl text-neutral-200 leading-relaxed max-w-4xl mx-auto font-light">
+        <span class="typewriter-text" data-text="<?php echo esc_attr($default_description); ?>"></span>
+      </p>
+    </div>
+
+    <!-- Premium CTA Buttons -->
+    <div class="hero-cta-container mb-16 opacity-0 animate-fade-slide-up" style="animation-delay: 1.6s;">
+      <div class="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-lg mx-auto">
+        
+        <!-- Primary CTA - Services -->
+        <a href="<?php echo esc_url($services_button_link); ?>" class="cta-primary group relative w-full sm:w-auto rounded-xl">
+          <div class="cta-button-inner px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl font-semibold text-lg text-white shadow-2xl relative overflow-hidden border border-primary-400/30">
+            <span class="relative z-10 flex items-center justify-center gap-3 rounded-xl">
+              <svg class="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              <?php echo esc_html($services_button_text); ?>
+            </span>
+            <div class="cta-shine absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          </div>
+        </a>
+
+        <!-- Secondary CTA - Application -->
+        <a href="<?php echo esc_url($application_button_link); ?>" class="cta-secondary group relative w-full sm:w-auto rounded-xl">
+          <div class="cta-button-inner px-8 py-4 bg-gradient-to-r from-transparent to-transparent border-2 border-white/30 rounded-xl font-semibold text-lg text-white shadow-2xl relative overflow-hidden backdrop-blur-sm">
+            <span class="relative z-10 flex items-center justify-center gap-3">
+              <svg class="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <?php echo esc_html($application_button_text); ?>
+            </span>
+            <div class="cta-glow absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+        </a>
+        
+      </div>
+    </div>
+
+    <!-- Success Statistics -->
+    <div class="hero-stats grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl mx-auto opacity-0 animate-fade-slide-up" style="animation-delay: 1.8s;">
+      
+      <div class="stat-item text-center">
+        <div class="stat-number text-3xl lg:text-4xl font-bold text-white mb-2" data-count="10000">0</div>
+        <div class="stat-label text-sm text-neutral-300 font-medium">Students Placed</div>
+      </div>
+      
+      <div class="stat-item text-center">
+        <div class="stat-number text-3xl lg:text-4xl font-bold text-white mb-2" data-count="500">0</div>
+        <div class="stat-label text-sm text-neutral-300 font-medium">Partner Universities</div>
+      </div>
+      
+      <div class="stat-item text-center">
+        <div class="stat-number text-3xl lg:text-4xl font-bold text-white mb-2" data-count="50">0</div>
+        <div class="stat-label text-sm text-neutral-300 font-medium">Countries</div>
+      </div>
+      
+      <div class="stat-item text-center">
+        <div class="stat-number text-3xl lg:text-4xl font-bold text-white mb-2" data-count="98">0</div>
+        <div class="stat-label text-sm text-neutral-300 font-medium">Success Rate %</div>
+      </div>
+      
+    </div>
+
+    <!-- Elegant Scroll Indicator -->
+    <div       class="hero-scroll absolute md:left-[45.666667%] left-[36.666667%] transform -translate-x-1/2 opacity-0 animate-fade-slide-up"
+ style="animation-delay: 2s;">
+      <div class="scroll-indicator flex flex-col items-center text-white/60">
+        <div class="scroll-wheel w-6 h-10 border-2 border-white/30 rounded-full mb-2 relative">
+          <div class="scroll-dot w-1 h-2 bg-white/50 rounded-full absolute top-2 left-1/2 transform -translate-x-1/2 animate-bounce"></div>
+        </div>
+        <span class="text-xs font-medium tracking-wider uppercase">Discover More</span>
+      </div>
+    </div>
+
+  </div>
+
 </section>
-
-<style>
-  /* Modern CSS animations with proper delays */
-  @keyframes fade-in-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes float {
-
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-
-  @keyframes shine {
-    0% {
-      transform: translateX(-100%);
-    }
-
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes grow {
-    0% {
-      width: 0%;
-    }
-
-    100% {
-      width: 87%;
-    }
-  }
-
-  @keyframes pulse {
-
-    0%,
-    100% {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  @keyframes bounce {
-
-    0%,
-    20%,
-    53%,
-    80%,
-    100% {
-      transform: translateY(0);
-    }
-
-    40%,
-    43% {
-      transform: translateY(-10px);
-    }
-
-    70% {
-      transform: translateY(-5px);
-    }
-  }
-
-  @keyframes ping {
-
-    75%,
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-
-  /* Animation classes */
-  .animate-fade-in-up {
-    animation: fade-in-up 0.6s ease-out forwards;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .animate-shine {
-    animation: shine 0.75s ease-out;
-  }
-
-  .animate-grow {
-    animation: grow 2s ease-out forwards;
-  }
-
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .animate-bounce {
-    animation: bounce 1s infinite;
-  }
-
-  .animate-ping {
-    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
-  /* Animation delays */
-  .animation-delay-300 {
-    animation-delay: 300ms;
-  }
-
-  .animation-delay-600 {
-    animation-delay: 600ms;
-  }
-
-  .animation-delay-900 {
-    animation-delay: 900ms;
-  }
-
-  .animation-delay-1000 {
-    animation-delay: 1000ms;
-  }
-
-  .animation-delay-1200 {
-    animation-delay: 1200ms;
-  }
-
-  .animation-delay-1500 {
-    animation-delay: 1500ms;
-  }
-
-  .animation-delay-1800 {
-    animation-delay: 1800ms;
-  }
-
-  .animation-delay-2000 {
-    animation-delay: 2000ms;
-  }
-
-  .animation-delay-2100 {
-    animation-delay: 2100ms;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4000ms;
-  }
-
-  /* Background grid utility */
-  .bg-grid-slate-100 {
-    background-image: linear-gradient(to right, rgb(241 245 249 / 1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(241 245 249 / 1) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  /* Enhanced Mobile Responsiveness */
-  @media (max-width: 640px) {
-
-    /* Typography improvements for mobile */
-    .text-3xl {
-      font-size: 1.875rem;
-      line-height: 2.25rem;
-    }
-
-    .text-4xl {
-      font-size: 2.25rem;
-      line-height: 2.5rem;
-    }
-
-    /* Better spacing for mobile */
-    .py-20 {
-      padding-top: 4rem;
-      padding-bottom: 4rem;
-    }
-
-    /* Ensure proper padding on mobile */
-    .px-4 {
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    /* Mobile button improvements */
-    .max-w-xs {
-      max-width: 16rem;
-    }
-
-    /* Hide complex background elements on small screens */
-    .bg-grid-slate-100 {
-      background-size: 20px 20px;
-      opacity: 0.5;
-    }
-  }
-
-  @media (max-width: 480px) {
-
-    /* Extra small screens */
-    .text-3xl {
-      font-size: 1.5rem;
-      line-height: 2rem;
-    }
-
-    .text-4xl {
-      font-size: 1.875rem;
-      line-height: 2.25rem;
-    }
-
-    .text-5xl {
-      font-size: 2.25rem;
-      line-height: 2.5rem;
-    }
-
-    /* Tighter spacing for very small screens */
-    .py-20 {
-      padding-top: 3rem;
-      padding-bottom: 3rem;
-    }
-
-    .mt-4 {
-      margin-top: 0.75rem;
-    }
-
-    .mt-8 {
-      margin-top: 1.5rem;
-    }
-
-    .mt-12 {
-      margin-top: 2rem;
-    }
-  }
-
-  /* Tablet responsiveness */
-  @media (min-width: 641px) and (max-width: 1024px) {
-
-    /* Adjust floating cards for tablets */
-    .absolute.right-8 {
-      right: 1rem;
-    }
-
-    .absolute.right-12 {
-      right: 2rem;
-    }
-
-    .absolute.right-16 {
-      right: 2.5rem;
-    }
-  }
-
-  /* Large screen optimizations */
-  @media (min-width: 1025px) {
-
-    /* Better spacing for large screens */
-    .py-48 {
-      padding-top: 10rem;
-      padding-bottom: 10rem;
-    }
-
-    .xl\:py-56 {
-      padding-top: 12rem;
-      padding-bottom: 12rem;
-    }
-  }
-
-  /* Performance optimizations */
-  .animate-fade-in-up,
-  .animate-float,
-  .animate-pulse,
-  .animate-bounce,
-  .animate-ping {
-    will-change: transform, opacity;
-  }
-
-  /* Improved focus states for accessibility */
-  .focus-visible\:outline:focus-visible {
-    outline: 2px solid;
-    outline-offset: 2px;
-  }
-
-  .focus-visible\:outline-indigo-600:focus-visible {
-    outline-color: rgb(79 70 229);
-  }
-
-  /* Touch targets for mobile */
-  @media (max-width: 640px) {
-
-    a,
-    button {
-      min-height: 44px;
-      /* iOS recommended minimum touch target */
-    }
-  }
-
-  /* Reduce motion for accessibility */
-  @media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-</style>
